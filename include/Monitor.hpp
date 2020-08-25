@@ -17,7 +17,6 @@ namespace glfw
 	protected:
 		GLFWmonitor* ptr;
 		friend class Window;
-		Monitor(GLFWmonitor* tptr):ptr(tptr){}
 		using connected_callback_type=std::function<void (const Monitor& m,bool connected)>;
 		
 		static void callbackDispatch(GLFWmonitor* m,int connected);
@@ -27,12 +26,7 @@ namespace glfw
 		static std::vector<Monitor> Monitors();
 		static Monitor Primary();
 		
-		template<class Func>
-		void SetCallback(Func& f)
-		{
-			glfwSetMonitorCallback(callbackDispatch);
-			cbmap[ptr]=f;
-		}
+		connected_callback_type& Callback;
 		
 		GLFWvidmode VideoMode() const;
 		std::vector<GLFWvidmode> VideoModes() const;
@@ -75,6 +69,9 @@ namespace glfw
 		
 		void Gamma(const Ramp& rmp);
 		Ramp Gamma() const;
+	protected:
+		Monitor(GLFWmonitor* tptr):ptr(tptr),Callback(cbmap[tptr])
+		{}
 	};
 }
 

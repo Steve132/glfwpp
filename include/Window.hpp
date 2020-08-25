@@ -21,17 +21,17 @@ protected:
 	static void dispatchFocusCallback(GLFWwindow* window, int);
 	static void dispatchIconifyCallback(GLFWwindow* window, int);
 	static void dispatchMaximizeCallback(GLFWwindow* window, int);
-	static void dispatchFramebufferSizeCallback(GLFWwindow* window, int);
+	static void dispatchFramebufferSizeCallback(GLFWwindow* window, int,int);
 	static void dispatchContentScaleCallback(GLFWwindow*,float,float);
 	
-	static void dispatchMouseButton(GLFWwindow*,int,int,int);
-	static void dispatchCursorPos(GLFWwindow*,double,double);
-	static void dispatchCursorEnter(GLFWwindow*,int);
-	static void dispatchScroll(GLFWwindow*,double,double);
-	static void dispatchKey(GLFWwindow*,int,int,int,int);
-	static void dispatchChar(GLFWwindow*,unsigned int);
-	static void dispatchCharMods(GLFWwindow*,unsigned int,int);
-	static void dispatchDrop(GLFWwindow*,int,const char*[]);
+	static void dispatchMouseButtonCallback(GLFWwindow*,int,int,int);
+	static void dispatchCursorPosCallback(GLFWwindow*,double,double);
+	static void dispatchCursorEnterCallback(GLFWwindow*,int);
+	static void dispatchScrollCallback(GLFWwindow*,double,double);
+	static void dispatchKeyCallback(GLFWwindow*,int,int,int,int);
+	static void dispatchCharCallback(GLFWwindow*,unsigned int);
+	//static void dispatchCharModsCallback(GLFWwindow*,unsigned int,int); Deprecated
+	static void dispatchDropCallback(GLFWwindow*,int,const char*[]);
 	Window(GLFWwindow*);
 public:
 	using Hint=std::variant<int,std::string>;
@@ -118,12 +118,12 @@ public:
 		glfwFocusWindow(ptr.get());
 	}
 
-	Monitor GetMonitor() const {
+	glfw::Monitor Monitor() const {
 		return glfwGetWindowMonitor(ptr.get());
 	}
-	void SetMonitor(const Point<int>& corner,
+	void Monitor(const Point<int>& corner,
 				const Shape<int>& shp,
-				const Monitor& newmon=Monitor::Primary(),
+				const glfw::Monitor& newmon=glfw::Monitor::Primary(),
 				int refreshRate=GLFW_DONT_CARE);
 	int Attrib(int attr) const{
 		return glfwGetWindowAttrib(ptr.get(),attr);
@@ -169,11 +169,31 @@ public:
 		glfwSwapBuffers(ptr.get());
 	}
 	friend Window CurrentContext();
+	
+	std::function<void (const Point<int>&)> PosCallback;
+	std::function<void (const Shape<int>&)> SizeCallback;
+	std::function<void ()> CloseCallback;
+	std::function<void ()> RefreshCallback;
+	std::function<void (bool)> FocusCallback;
+	std::function<void (bool)> IconifyCallback;
+	std::function<void (bool)> MaximizeCallback;
+	std::function<void (const Shape<int>&)> FramebufferSizeCallback;
+	std::function<void (const Point<float>&)> ContentScaleCallback;
+	
+	std::function<void (int,int,int)> MouseButtonCallback;
+	std::function<void (const Point<double>&)> CursorPosCallback;
+	std::function<void (bool)> CursorEnterCallback;
+	std::function<void (const Point<double>&)> ScrollCallback;
+	std::function<void (int,int,int,int)> KeyCallback;
+	std::function<void (unsigned int)> CharCallback;
+	std::function<void (const std::vector<std::string>&)> DropCallback;
+	
+	//void Cursor(const glfw::Cursor& cur); //TODO Cursor
+	//TODO: std::string->std::string_view
 };
 	Window CurrentContext(){
 		return Window(glfwGetCurrentContext());
 	}
-	//void Cursor(const glfw::Cursor& cur); TODO Cursor
 }
 
 #endif
