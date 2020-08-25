@@ -2,6 +2,8 @@
 #include <bitset>
 using namespace glfw;
 
+
+
 Window::Window(int width,int height,const Window::Hints& hints,const std::string& title,const Monitor& mon,const Window* share):ptr(nullptr,glfwDestroyWindow)
 {
 	glfwDefaultWindowHints();

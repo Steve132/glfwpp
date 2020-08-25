@@ -14,11 +14,30 @@ class Window
 {
 protected:
 	std::unique_ptr<GLFWwindow,void (*)(GLFWwindow*)> ptr;
+	static void dispatchPosCallback(GLFWwindow* window, int,int);
+	static void dispatchSizeCallback(GLFWwindow* window, int,int);
+	static void dispatchCloseCallback(GLFWwindow* window);
+	static void dispatchRefreshCallback(GLFWwindow* window);
+	static void dispatchFocusCallback(GLFWwindow* window, int);
+	static void dispatchIconifyCallback(GLFWwindow* window, int);
+	static void dispatchMaximizeCallback(GLFWwindow* window, int);
+	static void dispatchFramebufferSizeCallback(GLFWwindow* window, int);
+	static void dispatchContentScaleCallback(GLFWwindow*,float,float);
+	
+	static void dispatchMouseButton(GLFWwindow*,int,int,int);
+	static void dispatchCursorPos(GLFWwindow*,double,double);
+	static void dispatchCursorEnter(GLFWwindow*,int);
+	static void dispatchScroll(GLFWwindow*,double,double);
+	static void dispatchKey(GLFWwindow*,int,int,int,int);
+	static void dispatchChar(GLFWwindow*,unsigned int);
+	static void dispatchCharMods(GLFWwindow*,unsigned int,int);
+	static void dispatchDrop(GLFWwindow*,int,const char*[]);
+	Window(GLFWwindow*);
 public:
 	using Hint=std::variant<int,std::string>;
 	using Hints=std::unordered_map<int,Hint>;
 	Window(int width,int height,const Hints& hints=Hints(),const std::string& title=std::string(),const Monitor& mon=Monitor::Primary(),const Window* share=nullptr);
-	
+	//TODO: Vulkan with VkInstance
 	
 	void ShouldClose(bool doclose) {
 		glfwSetWindowShouldClose(ptr.get(),doclose ? GLFW_TRUE : GLFW_FALSE);
@@ -98,15 +117,13 @@ public:
 	void Focus(){
 		glfwFocusWindow(ptr.get());
 	}
-	void RequestAttention() {
-		glfwRequestWindowAttention(ptr.get());
-	}
-	Monitor Monitor() const {
+
+	Monitor GetMonitor() const {
 		return glfwGetWindowMonitor(ptr.get());
 	}
-	void Monitor(const Point<int>& corner,
+	void SetMonitor(const Point<int>& corner,
 				const Shape<int>& shp,
-				const Monitor& newmon=Monitor::Default(),
+				const Monitor& newmon=Monitor::Primary(),
 				int refreshRate=GLFW_DONT_CARE);
 	int Attrib(int attr) const{
 		return glfwGetWindowAttrib(ptr.get(),attr);
@@ -115,8 +132,48 @@ public:
 	void Attrib(int attr,int val) {
 		glfwSetWindowAttrib(ptr.get(),attr,val);
 	}
+	void RequestAttention() {
+		glfwRequestWindowAttention(ptr.get());
+	}
 #endif
+	int InputMode(int mode) const{
+		return glfwGetInputMode(ptr.get(),mode);
+	}
+	void InputMode(int mode,int value){
+		glfwSetInputMode(ptr.get(),mode,value);
+	}
+	int Key(int key) const {
+		return glfwGetKey(ptr.get(),key);
+	}
+	int MouseButton(int button) const {
+		return glfwGetMouseButton(ptr.get(),button);
+	}
+	Point<double> CursorPos() const{
+		Point<double> p;
+		glfwGetCursorPos(ptr.get(),&p.x,&p.y);
+		return p;
+	}
+	void CursorPos(const Point<double>& p) {
+		glfwSetCursorPos(ptr.get(),p.x,p.y);
+	}
+	std::string ClipboardString() const{
+		return glfwGetClipboardString(ptr.get());
+	}
+	void ClipboardString(const std::string& st){
+		glfwSetClipboardString(ptr.get(),st.c_str());
+	}
+	void MakeContextCurrent() const{
+		glfwMakeContextCurrent(ptr.get());
+	}
+	void SwapBuffers() {
+		glfwSwapBuffers(ptr.get());
+	}
+	friend Window CurrentContext();
 };
+	Window CurrentContext(){
+		return Window(glfwGetCurrentContext());
+	}
+	//void Cursor(const glfw::Cursor& cur); TODO Cursor
 }
 
 #endif
