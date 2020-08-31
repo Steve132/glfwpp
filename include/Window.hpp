@@ -191,7 +191,7 @@ public:
 	//void Cursor(const glfw::Cursor& cur); //TODO Cursor
 	//TODO: std::string->std::string_view
 };
-	Window CurrentContext(){
+	inline Window CurrentContext(){
 		return Window(glfwGetCurrentContext());
 	}
 }

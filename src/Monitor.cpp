@@ -6,6 +6,7 @@ using namespace glfw;
 
 std::vector<Monitor> Monitor::Monitors()
 {
+	glfw::impl::Verify();
 	int count;
 	GLFWmonitor** mts=glfwGetMonitors(&count);
 	std::vector<Monitor> mnt;
@@ -18,6 +19,7 @@ std::vector<Monitor> Monitor::Monitors()
 }
 Monitor Monitor::Primary()
 {
+	glfw::impl::Verify();
 	return glfwGetPrimaryMonitor();
 }
 std::unordered_map<GLFWmonitor*,Monitor::connected_callback_type> Monitor::cbmap;

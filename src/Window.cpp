@@ -6,6 +6,7 @@ using namespace glfw;
 
 Window::Window(int width,int height,const Window::Hints& hints,const std::string& title,const glfw::Monitor& mon,const Window* share):ptr(nullptr,glfwDestroyWindow)
 {
+	glfw::impl::Verify();
 	glfwDefaultWindowHints();
 	for(auto& kv : hints)
 	{
@@ -23,7 +24,8 @@ Window::Window(int width,int height,const Window::Hints& hints,const std::string
 				break;
 		};
 	}
-	GLFWwindow* wnd=glfwCreateWindow(width,height,title.c_str(),mon.ptr,share->ptr.get());
+	GLFWwindow* wnd=glfwCreateWindow(width,height,title.c_str(),mon.ptr,share ? share->ptr.get() : nullptr);
+	if(!wnd) throw glfw::Exception(GLFWPP_ERROR,"Failed to create window!");
 	ptr=std::unique_ptr<GLFWwindow,void (*)(GLFWwindow*)>(wnd,glfwDestroyWindow);
 	glfwSetWindowUserPointer(wnd,this);
 	

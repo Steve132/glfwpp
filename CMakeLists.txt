@@ -10,6 +10,10 @@ add_library(glfwpp
 	include/Monitor.hpp
 	src/Window.cpp
 	include/Window.hpp
+	src/General.cpp
+	include/General.hpp
+	src/Joystick.cpp
+	include/Joystick.hpp
 )
 
 target_compile_features(glfwpp PUBLIC cxx_std_17)

@@ -5,6 +5,9 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <functional>
+
+
 #define GLFWPP_ERROR 0x00020001
 
 namespace glfw
@@ -13,7 +16,8 @@ namespace glfw
 	class Exception:public std::runtime_error
 	{
 	public:
-		Exception(int error_code,const std::string& description);
+		Exception(int error_code,const std::string& description):std::runtime_error(description)
+		{}
 	};
 	
 	namespace impl {
@@ -24,6 +28,9 @@ namespace glfw
 	}
 	extern impl::version_t version;
 	
+	namespace impl{
+		void Verify();
+	}
 	namespace Init
 	{
 		void hint(Enum h,int value);
@@ -97,6 +104,8 @@ namespace glfw
 	//InstanceProcAddress
 	//PhysicalDevicePresentationSupport
 	//
+	
+	extern std::function<void (int,const std::string&)> ErrorCallback;
 }
 
 #endif
