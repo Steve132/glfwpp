@@ -36,8 +36,9 @@ protected:
 public:
 	using Hint=std::variant<int,std::string>;
 	using Hints=std::unordered_map<int,Hint>;
-	Window(int width,int height,const Hints& hints=Hints(),const std::string& title=std::string(),const Monitor& mon=Monitor::Primary(),const Window* share=nullptr);
+	Window(int width,int height,const Hints& hints=Hints(),const std::string& title=std::string(),const Monitor& fullscreen_mon=Monitor::None(),const Window* share=nullptr);
 	//TODO: Vulkan with VkInstance
+	
 	
 	void ShouldClose(bool doclose) {
 		glfwSetWindowShouldClose(ptr.get(),doclose ? GLFW_TRUE : GLFW_FALSE);
@@ -45,6 +46,11 @@ public:
 	bool ShouldClose() const {
 		return glfwWindowShouldClose(ptr.get())==GLFW_TRUE;
 	}
+	operator bool() const { return !ShouldClose(); }
+	bool operator==(const Window& o) const { return ptr==o.ptr; }
+	bool operator!=(const Window& o) const { return ptr!=o.ptr; }	
+	bool operator<(const Window& o) const { return ptr < o.ptr; }
+	
 	void Title(const std::string& title) {
 		glfwSetWindowTitle(ptr.get(),title.c_str());
 	}

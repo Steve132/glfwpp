@@ -22,6 +22,11 @@ Monitor Monitor::Primary()
 	glfw::impl::Verify();
 	return glfwGetPrimaryMonitor();
 }
+Monitor Monitor::None()
+{
+	glfw::impl::Verify();
+	return nullptr;
+}
 std::unordered_map<GLFWmonitor*,Monitor::connected_callback_type> Monitor::cbmap;
 void Monitor::callbackDispatch(GLFWmonitor* m,int connected)
 {

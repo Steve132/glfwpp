@@ -25,6 +25,11 @@ namespace glfw
 	public:
 		static std::vector<Monitor> Monitors();
 		static Monitor Primary();
+		static Monitor None();
+		
+		bool operator==(const Monitor& o) const { return ptr==o.ptr; }
+		bool operator!=(const Monitor& o) const { return ptr!=o.ptr; }	
+		bool operator<(const Monitor& o) const { return ptr < o.ptr; }
 		
 		connected_callback_type& Callback;
 		

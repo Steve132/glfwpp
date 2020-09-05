@@ -29,27 +29,60 @@ Window::Window(int width,int height,const Window::Hints& hints,const std::string
 	ptr=std::unique_ptr<GLFWwindow,void (*)(GLFWwindow*)>(wnd,glfwDestroyWindow);
 	glfwSetWindowUserPointer(wnd,this);
 	
-	glfwSetWindowPosCallback(wnd,dispatchPosCallback);
+	glfwSetWindowPosCallback(wnd,dispatchPosCallback); 
+	PosCallback=[](const Point<int>&){};
 	glfwSetWindowSizeCallback(wnd,dispatchSizeCallback);
+	SizeCallback=[](const Shape<int>&){};
 	glfwSetWindowCloseCallback(wnd,dispatchCloseCallback);
+	CloseCallback=[](){};
 	glfwSetWindowRefreshCallback(wnd,dispatchRefreshCallback);
+	RefreshCallback=[](){};
 	glfwSetWindowFocusCallback(wnd,dispatchFocusCallback);
+	FocusCallback=[](bool){};
 	glfwSetWindowIconifyCallback(wnd,dispatchIconifyCallback);
-	glfwSetFramebufferSizeCallback(wnd,dispatchFramebufferSizeCallback);	
+	IconifyCallback=[](bool){};
+	glfwSetFramebufferSizeCallback(wnd,dispatchFramebufferSizeCallback);
+	FramebufferSizeCallback=[](const Shape<int>&){};	
 	
 #if GLFWPP_GLFW_VERSION_FULL >= 303
 	glfwSetWindowMaximizeCallback(wnd,dispatchMaximizeCallback);
-	glfwSetWindowContentScaleCallback(wnd,dispatchContentScaleCallback);	
+	MaximizeCallback=[](bool){};
+	glfwSetWindowContentScaleCallback(wnd,dispatchContentScaleCallback);
+	ContentScaleCallback=[](const Point<float>&){};
 #endif
 	
 	glfwSetMouseButtonCallback(wnd,dispatchMouseButtonCallback);
+	MouseButtonCallback=[](int,int,int){};
 	glfwSetCursorPosCallback(wnd,dispatchCursorPosCallback);
+	CursorPosCallback=[](const Point<double>&){};
 	glfwSetCursorEnterCallback(wnd,dispatchCursorEnterCallback);
+	CursorEnterCallback=[](bool){};
 	glfwSetScrollCallback(wnd,dispatchScrollCallback);
+	ScrollCallback=[](const Point<double>&){};
 	glfwSetKeyCallback(wnd,dispatchKeyCallback);
+	KeyCallback=[](int,int,int,int){};
 	glfwSetCharCallback(wnd,dispatchCharCallback);
+	CharCallback=[](unsigned int){};
 	//static void dispatchCharModsCallback(GLFWwindow*,unsigned int,int); Deprecated
 	glfwSetDropCallback(wnd,dispatchDropCallback);
+	DropCallback=[](const std::vector<std::string>&){};
+	
+	std::function<void (const Shape<int>&)> SizeCallback;
+	std::function<void ()> CloseCallback;
+	std::function<void ()> RefreshCallback;
+	std::function<void (bool)> FocusCallback;
+	std::function<void (bool)> IconifyCallback;
+	std::function<void (bool)> MaximizeCallback;
+	std::function<void (const Shape<int>&)> FramebufferSizeCallback;
+	std::function<void (const Point<float>&)> ContentScaleCallback;
+	
+	std::function<void (int,int,int)> MouseButtonCallback;
+	std::function<void (const Point<double>&)> CursorPosCallback;
+	std::function<void (bool)> CursorEnterCallback;
+	std::function<void (const Point<double>&)> ScrollCallback;
+	std::function<void (int,int,int,int)> KeyCallback;
+	std::function<void (unsigned int)> CharCallback;
+	std::function<void (const std::vector<std::string>&)> DropCallback;
 }
 static inline uint32_t popcount(uint32_t x)
 {

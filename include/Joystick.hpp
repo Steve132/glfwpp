@@ -52,4 +52,6 @@ public:
 };
 }
 
+//TODO: gamepad functions
+
 #endif
