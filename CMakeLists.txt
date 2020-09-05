@@ -30,3 +30,5 @@ message(STATUS "Using glfw3")
 target_link_libraries(glfwpp glfw)
 endif()
 endif()
+
+add_subdirectory(test)
