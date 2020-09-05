@@ -1,5 +1,6 @@
 #include "Window.hpp"
 #include <bitset>
+#include "Cursor.hpp"
 using namespace glfw;
 
 
@@ -115,6 +116,12 @@ void Window::AspectRatio(int n,int d) {
 	d/=cd;
 	glfwSetWindowAspectRatio(ptr.get(),n,d);
 }
+
+void Window::Cursor(const glfw::Cursor& cur)
+{
+	if(cur.ptr && ptr) glfwSetCursor(ptr.get(),cur.ptr.get());
+}
+
 
 static inline Window* mkwnd(GLFWwindow* wptr)
 {

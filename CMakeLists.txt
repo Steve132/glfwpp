@@ -14,6 +14,8 @@ add_library(glfwpp
 	include/General.hpp
 	src/Joystick.cpp
 	include/Joystick.hpp
+	src/Cursor.cpp
+	include/Cursor.hpp
 )
 
 target_compile_features(glfwpp PUBLIC cxx_std_17)

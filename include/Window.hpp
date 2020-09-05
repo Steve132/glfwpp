@@ -10,6 +10,7 @@
 
 namespace glfw
 {
+class Cursor;
 class Window
 {
 protected:
@@ -194,7 +195,7 @@ public:
 	std::function<void (unsigned int)> CharCallback;
 	std::function<void (const std::vector<std::string>&)> DropCallback;
 	
-	//void Cursor(const glfw::Cursor& cur); //TODO Cursor
+	void Cursor(const glfw::Cursor& cur);
 	//TODO: std::string->std::string_view
 };
 	inline Window CurrentContext(){
