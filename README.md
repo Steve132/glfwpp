@@ -10,7 +10,7 @@ Set/Get uses the `void Foo(int& a)/int Foo() const` convention in the C++ STL,  
 
 Callbacks are setup automatically and map to public `std::function` members for use with lambdas or other function bindings.  For Example, `wind.FocusCallback=[](bool f){};` isntead of `glfwSetWindowFocusCallback`
 
-Minimal Example (based on https://www.glfw.org/documentation.html#example-code)
+Minimal Example (based on https://www.glfw.org/documentation.html#example-code) 
 
 	#include<iostream>
 	#include<utility>
