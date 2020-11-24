@@ -94,7 +94,7 @@ namespace glfw
 		return reinterpret_cast<void*>(glfwGetProcAddress(procname));
 	}
 	
-#if GLFWPP_GLFW_VERSION_FULL >= 303
+#if GLFWPP_GLFW_VERSION_FULL > 303
 	inline bool VulkanSuppported(){
 		return glfwGetVulkanSupported()==GLFW_TRUE;
 	}
