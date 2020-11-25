@@ -53,7 +53,7 @@ void Monitor::Gamma(const Monitor::Ramp& r)
 		gr.red=const_cast<uint16_t*>(r.red.data());
 		gr.green=const_cast<uint16_t*>(r.green.data());
 		gr.blue=const_cast<uint16_t*>(r.blue.data());
-		gr.size=r.red.size();
+		gr.size=(unsigned int)r.red.size();
 		glfwSetGammaRamp(ptr,&gr);
 	}
 	else{

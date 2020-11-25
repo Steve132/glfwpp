@@ -87,7 +87,7 @@ Window::Window(int width,int height,const Window::Hints& hints,const std::string
 }
 static inline uint32_t popcount(uint32_t x)
 {
-	return std::bitset<32>(x).count();
+	return (uint32_t)std::bitset<32>(x).count();
 }
 static inline uint32_t ctz(uint32_t x)
 {
