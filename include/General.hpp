@@ -96,7 +96,7 @@ namespace glfw
 	
 #if GLFWPP_GLFW_VERSION_FULL > 303
 	inline bool VulkanSuppported(){
-		return glfwGetVulkanSupported()==GLFW_TRUE;
+		return glfwVulkanSupported()==GLFW_TRUE;
 	}
 #endif
 	std::vector<std::string> RequiredInstanceExtensions();
