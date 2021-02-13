@@ -36,7 +36,7 @@ namespace glfw
 		void hint(Enum h,int value);
 	}
 	
-	class Timer {
+	struct Timer {
 		static inline uint64_t Value() { return glfwGetTimerValue(); }
 		static inline uint64_t Frequency() { return glfwGetTimerFrequency(); }
 		operator double(){
