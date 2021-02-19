@@ -131,7 +131,10 @@ public:
 	void Monitor(const Point<int>& corner,
 				const Shape<int>& shp,
 				const glfw::Monitor& newmon=glfw::Monitor::Primary(),
-				int refreshRate=GLFW_DONT_CARE);
+				int refreshRate = GLFW_DONT_CARE)
+	{
+		glfwSetWindowMonitor(ptr.get(), newmon.ptr, corner.x, corner.y, shp.width, shp.height, refreshRate);
+	}
 	int Attrib(int attr) const{
 		return glfwGetWindowAttrib(ptr.get(),attr);
 	}
