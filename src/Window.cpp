@@ -31,59 +31,42 @@ Window::Window(int width,int height,const Window::Hints& hints,const std::string
 	glfwSetWindowUserPointer(wnd,this);
 	
 	glfwSetWindowPosCallback(wnd,dispatchPosCallback); 
-	PosCallback=[](const Point<int>&){};
+	PosCallback=[](Window&,const Point<int>&){};
 	glfwSetWindowSizeCallback(wnd,dispatchSizeCallback);
-	SizeCallback=[](const Shape<int>&){};
+	SizeCallback=[](Window&,const Shape<int>&){};
 	glfwSetWindowCloseCallback(wnd,dispatchCloseCallback);
-	CloseCallback=[](){};
+	CloseCallback=[](Window&){};
 	glfwSetWindowRefreshCallback(wnd,dispatchRefreshCallback);
-	RefreshCallback=[](){};
+	RefreshCallback=[](Window&){};
 	glfwSetWindowFocusCallback(wnd,dispatchFocusCallback);
-	FocusCallback=[](bool){};
+	FocusCallback=[](Window&,bool){};
 	glfwSetWindowIconifyCallback(wnd,dispatchIconifyCallback);
-	IconifyCallback=[](bool){};
+	IconifyCallback=[](Window&,bool){};
 	glfwSetFramebufferSizeCallback(wnd,dispatchFramebufferSizeCallback);
-	FramebufferSizeCallback=[](const Shape<int>&){};	
+	FramebufferSizeCallback=[](Window&,const Shape<int>&){};	
 	
 #if GLFWPP_GLFW_VERSION_FULL >= 303
 	glfwSetWindowMaximizeCallback(wnd,dispatchMaximizeCallback);
-	MaximizeCallback=[](bool){};
+	MaximizeCallback=[](Window&,bool){};
 	glfwSetWindowContentScaleCallback(wnd,dispatchContentScaleCallback);
-	ContentScaleCallback=[](const Point<float>&){};
+	ContentScaleCallback=[](Window&,const Point<float>&){};
 #endif
 	
 	glfwSetMouseButtonCallback(wnd,dispatchMouseButtonCallback);
-	MouseButtonCallback=[](int,int,int){};
+	MouseButtonCallback=[](Window&,int,int,int){};
 	glfwSetCursorPosCallback(wnd,dispatchCursorPosCallback);
-	CursorPosCallback=[](const Point<double>&){};
+	CursorPosCallback=[](Window&,const Point<double>&){};
 	glfwSetCursorEnterCallback(wnd,dispatchCursorEnterCallback);
-	CursorEnterCallback=[](bool){};
+	CursorEnterCallback=[](Window&,bool){};
 	glfwSetScrollCallback(wnd,dispatchScrollCallback);
-	ScrollCallback=[](const Point<double>&){};
+	ScrollCallback=[](Window&,const Point<double>&){};
 	glfwSetKeyCallback(wnd,dispatchKeyCallback);
-	KeyCallback=[](int,int,int,int){};
+	KeyCallback=[](Window&,int,int,int,int){};
 	glfwSetCharCallback(wnd,dispatchCharCallback);
-	CharCallback=[](unsigned int){};
+	CharCallback=[](Window&,unsigned int){};
 	//static void dispatchCharModsCallback(GLFWwindow*,unsigned int,int); Deprecated
 	glfwSetDropCallback(wnd,dispatchDropCallback);
-	DropCallback=[](const std::vector<std::string>&){};
-	
-	std::function<void (const Shape<int>&)> SizeCallback;
-	std::function<void ()> CloseCallback;
-	std::function<void ()> RefreshCallback;
-	std::function<void (bool)> FocusCallback;
-	std::function<void (bool)> IconifyCallback;
-	std::function<void (bool)> MaximizeCallback;
-	std::function<void (const Shape<int>&)> FramebufferSizeCallback;
-	std::function<void (const Point<float>&)> ContentScaleCallback;
-	
-	std::function<void (int,int,int)> MouseButtonCallback;
-	std::function<void (const Point<double>&)> CursorPosCallback;
-	std::function<void (bool)> CursorEnterCallback;
-	std::function<void (const Point<double>&)> ScrollCallback;
-	std::function<void (int,int,int,int)> KeyCallback;
-	std::function<void (unsigned int)> CharCallback;
-	std::function<void (const std::vector<std::string>&)> DropCallback;
+	DropCallback=[](Window&,const std::vector<std::string>&){};
 }
 static inline uint32_t popcount(uint32_t x)
 {
@@ -129,53 +112,58 @@ static inline Window* mkwnd(GLFWwindow* wptr)
 }
 
 void Window::dispatchPosCallback(GLFWwindow* window, int x,int y){
-	mkwnd(window)->PosCallback(Point<int>{x,y});
+	Window* wptr=mkwnd(window); wptr->PosCallback(*wptr,Point<int>{x,y});
 }
 void Window::dispatchSizeCallback(GLFWwindow* window, int w,int h){
-	mkwnd(window)->SizeCallback(Shape<int>{w,h});
+	Window* wptr=mkwnd(window); wptr->SizeCallback(*wptr,Shape<int>{w,h});
 }
 void Window::dispatchCloseCallback(GLFWwindow* window){
-	mkwnd(window)->CloseCallback();
+	Window* wptr=mkwnd(window); wptr->CloseCallback(*wptr);
 }
 void Window::dispatchRefreshCallback(GLFWwindow* window){
-	mkwnd(window)->RefreshCallback();
+	Window* wptr=mkwnd(window); wptr->RefreshCallback(*wptr);
 }
 void Window::dispatchFocusCallback(GLFWwindow* window, int focus){
-	mkwnd(window)->FocusCallback(focus==GLFW_TRUE);
+	Window* wptr=mkwnd(window); wptr->FocusCallback(*wptr,focus==GLFW_TRUE);
 }
 void Window::dispatchIconifyCallback(GLFWwindow* window, int ic){
-	mkwnd(window)->IconifyCallback(ic==GLFW_TRUE);
+	Window* wptr=mkwnd(window); wptr->IconifyCallback(*wptr,ic==GLFW_TRUE);
 }
 void Window::dispatchMaximizeCallback(GLFWwindow* window, int mx){
-	mkwnd(window)->MaximizeCallback(mx==GLFW_TRUE);
+	Window* wptr=mkwnd(window); wptr->MaximizeCallback(*wptr,mx==GLFW_TRUE);
 }
 void Window::dispatchFramebufferSizeCallback(GLFWwindow* window, int w,int h){
-	mkwnd(window)->FramebufferSizeCallback(Shape<int>{w,h});
+	Window* wptr=mkwnd(window); wptr->FramebufferSizeCallback(*wptr,Shape<int>{w,h});
 }
 void Window::dispatchContentScaleCallback(GLFWwindow* window,float x,float y){
-	mkwnd(window)->ContentScaleCallback(Point<float>{x,y});
+	Window* wptr=mkwnd(window); wptr->ContentScaleCallback(*wptr,Point<float>{x,y});
 }
 
 void Window::dispatchMouseButtonCallback(GLFWwindow* window,int a,int b,int c){
-	mkwnd(window)->MouseButtonCallback(a,b,c);
+	Window* wptr=mkwnd(window); wptr->MouseButtonCallback(*wptr,a,b,c);
 }
 void Window::dispatchCursorPosCallback(GLFWwindow* window,double x,double y){
-	mkwnd(window)->CursorPosCallback(Point<double>{x,y});
+	Window* wptr=mkwnd(window); wptr->CursorPosCallback(*wptr,Point<double>{x,y});
 }
 void Window::dispatchCursorEnterCallback(GLFWwindow* window,int e){
-	mkwnd(window)->CursorEnterCallback(e==GLFW_TRUE);
+	Window* wptr=mkwnd(window); wptr->CursorEnterCallback(*wptr,e==GLFW_TRUE);
 }
 void Window::dispatchScrollCallback(GLFWwindow* window,double x,double y){
-	mkwnd(window)->ScrollCallback(Point<double>{x,y});
+	Window* wptr=mkwnd(window); wptr->ScrollCallback(*wptr,Point<double>{x,y});
 }
 void Window::dispatchKeyCallback(GLFWwindow* window,int a,int b,int c,int d){
-	mkwnd(window)->KeyCallback(a,b,c,d);
+	Window* wptr=mkwnd(window); wptr->KeyCallback(*wptr,a,b,c,d);
 }
 void Window::dispatchCharCallback(GLFWwindow* window,unsigned int ch){
-	mkwnd(window)->CharCallback(ch);
+	Window* wptr=mkwnd(window); wptr->CharCallback(*wptr,ch);
 }
 //void Window::dispatchCharModsCallback(GLFWwindow*,unsigned int,int){} DEPRECATED
 void Window::dispatchDropCallback(GLFWwindow* window,int count,const char* paths[]){
 	std::vector<std::string> vpaths(paths,paths+count);
-	mkwnd(window)->DropCallback(vpaths);
+	Window* wptr=mkwnd(window); wptr->DropCallback(*wptr,vpaths);
+}
+
+Window& glfw::CurrentContext()
+{
+    return *mkwnd(glfwGetCurrentContext());
 }

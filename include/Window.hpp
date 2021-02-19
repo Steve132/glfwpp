@@ -178,32 +178,30 @@ public:
 	void SwapBuffers() {
 		glfwSwapBuffers(ptr.get());
 	}
-	friend Window CurrentContext();
+	friend Window& CurrentContext();
 	
-	std::function<void (const Point<int>&)> PosCallback;
-	std::function<void (const Shape<int>&)> SizeCallback;
-	std::function<void ()> CloseCallback;
-	std::function<void ()> RefreshCallback;
-	std::function<void (bool)> FocusCallback;
-	std::function<void (bool)> IconifyCallback;
-	std::function<void (bool)> MaximizeCallback;
-	std::function<void (const Shape<int>&)> FramebufferSizeCallback;
-	std::function<void (const Point<float>&)> ContentScaleCallback;
+	std::function<void (Window&,const Point<int>&)> PosCallback;
+	std::function<void (Window&,const Shape<int>&)> SizeCallback;
+	std::function<void (Window&)> CloseCallback;
+	std::function<void (Window&)> RefreshCallback;
+	std::function<void (Window&,bool)> FocusCallback;
+	std::function<void (Window&,bool)> IconifyCallback;
+	std::function<void (Window&,bool)> MaximizeCallback;
+	std::function<void (Window&,const Shape<int>&)> FramebufferSizeCallback;
+	std::function<void (Window&,const Point<float>&)> ContentScaleCallback;
 	
-	std::function<void (int,int,int)> MouseButtonCallback;
-	std::function<void (const Point<double>&)> CursorPosCallback;
-	std::function<void (bool)> CursorEnterCallback;
-	std::function<void (const Point<double>&)> ScrollCallback;
-	std::function<void (int,int,int,int)> KeyCallback;
-	std::function<void (unsigned int)> CharCallback;
-	std::function<void (const std::vector<std::string>&)> DropCallback;
+	std::function<void (Window&,int,int,int)> MouseButtonCallback;
+	std::function<void (Window&,const Point<double>&)> CursorPosCallback;
+	std::function<void (Window&,bool)> CursorEnterCallback;
+	std::function<void (Window&,const Point<double>&)> ScrollCallback;
+	std::function<void (Window&,int,int,int,int)> KeyCallback;
+	std::function<void (Window&,unsigned int)> CharCallback;
+	std::function<void (Window&,const std::vector<std::string>&)> DropCallback;
 	
 	void Cursor(const glfw::Cursor& cur);
 	//TODO: std::string->std::string_view
 };
-	inline Window CurrentContext(){
-		return Window(glfwGetCurrentContext());
-	}
+	Window& CurrentContext();
 }
 
 #endif
