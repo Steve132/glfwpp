@@ -51,6 +51,12 @@ if((NOT EXISTS ${GLFW3_SOURCE_DIR}) AND GLFW3_TRY_FETCH)
 endif()
 if(EXISTS ${GLFW3_SOURCE_DIR})
 	include(ExternalProject)
+	set(UseDLLCRT OFF)
+	
+	if(MSVC AND (CMAKE_MSVC_RUNTIME_LIBARY_DLL MATCHES "DLL"))
+		set(UseDLLCRT ON)
+	endif()
+
 	ExternalProject_Add(glfw3-external 
 		SOURCE_DIR ${GLFW3_SOURCE_DIR}
 		EXCLUDE_FROM_ALL
@@ -61,6 +67,7 @@ if(EXISTS ${GLFW3_SOURCE_DIR})
 			-DGLFW_INSTALL=ON
 			-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install
 			-DBUILD_SHARED_LIBS=OFF
+			-DUSE_MSVC_RUNTIME_LIBRARY_DLL=${UseDLLCRT}
 	)
 	add_library(glfw3 INTERFACE)
 	add_library(glfw3-ex UNKNOWN IMPORTED GLOBAL)
