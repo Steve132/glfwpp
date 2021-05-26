@@ -1,37 +1,81 @@
-find_package(GLFW3 QUIET)
+set(GLFW3_TRY_FETCH YES CACHE BOOL "Try to download GLFW3 as an externalproject if you can't find it")
+set(GLFW3_FETCH_VERSION "3.3.2" CACHE STRING "The version of GLFW3 to fetch")
+set(GLFW3_SOURCE_DIR "" CACHE PATH "The location of the source code distro for GLFW")
+set(GLFW3_INCLUDE_DIR ""  CACHE PATH "The location of glfw.h")
+set(GLFW3_LIBRARIES ""  CACHE FILEPATH "The location of glfw.lib")
 
-if(GLFW3_FOUND)	
-	add_library(glfw3 ALIAS GLFW3::GLFW3)
+if(TARGET glfw3)
+set(GLFW3_FOUND True)
 else()
+set(GLFW3_FOUND False)
+endif()
+
+
+if(NOT GLFW3_FOUND)
+	find_package(GLFW3 QUIET)
+	if(GLFW3_FOUND)
+		add_library(glfw3 ALIAS GLFW3::GLFW3)
+	endif()
+endif()
+
+if(NOT GLFW3_FOUND)
 	find_package(glfw3 QUIET)
 	if(glfw3_FOUND)
-		message(STATUS "Using glfw3")
-			add_library(glfw3 ALIAS glfw)
-	else()
-		set(GLFW3_TRY_FETCH YES CACHE BOOL "Try to download GLFW3 as an externalproject")
-		set(GLFW3_FETCH_VERSION "3.3.2" CACHE STRING "The version of GLFW3 to fetch")
-		if(GLFW3_TRY_FETCH)
-			include(FetchContent)
-			FetchContent_Declare(glfw3 
+		add_library(glfw3 ALIAS glfw)
+		set(GLFW3_FOUND True)
+	endif()
+endif()
+
+if((NOT GLFW3_FOUND) AND (EXISTS ${GLFW3_INCLUDE_DIR}) AND (EXISTS ${GLFW3_LIBRARIES}))
+	add_library(glfw3 UNKNOWN IMPORTED GLOBAL)
+	target_include_directories(glfw3 PUBLIC ${GLFW3_INCLUDE_DIR})
+	set_property(TARGET glfw3 IMPORTED_LOCATION ${GLFW3_LIBRARIES})
+	set(GLFW3_FOUND True)
+endif()
+
+
+if(NOT GLFW3_FOUND)
+	
+if((NOT EXISTS ${GLFW3_SOURCE_DIR}) AND GLFW3_TRY_FETCH)
+	include(FetchContent)
+	FetchContent_Declare(glfw3 
 				URL "https://github.com/glfw/glfw/releases/download/${GLFW3_FETCH_VERSION}/glfw-${GLFW3_FETCH_VERSION}.zip"
 				)
-			set(GLFW_BUILD_DOCS OFF)
-			set(GLFW_BUILD_EXAMPLES OFF)
-			set(GLFW_BUILD_TESTS OFF) #-DGLFW_INSTALL=YES
-			FetchContent_MakeAvailable(glfw3)
-			add_library(glfw3 ALIAS glfw)
-		else()
-			set(GLFW3_INCLUDE_DIR NONE CACHE PATH "The location of glfw.h")
-			set(GLFW3_LIB_FILE NONE CACHE FILEPATH "The location of glfw.lib")
-			if(EXISTS ${GLFW3_INCLUDE_DIR} AND EXISTS ${GLFW3_LIB_FILE})
-				add_library(glfw3 UNKNOWN IMPORTED GLOBAL)
-				message(ERROR "This part is probably broken...")
-				target_include_directories(glfw3 ${GLFW3_INCLUDE_DIR})
-			else()
-				message(SEND_ERROR "Cannot build glfwpp, GLFW not found.")
-			endif()
+	FetchContent_GetProperties(glfw3)
+	if(NOT glfw3_POPULATED)
+		FetchContent_Populate(glfw3)
+		if(glfw3_POPULATED)
+			set(GLFW3_SOURCE_DIR ${glfw3_SOURCE_DIR})
 		endif()
 	endif()
+endif()
+if(EXISTS ${GLFW3_SOURCE_DIR})
+	include(ExternalProject)
+	ExternalProject_Add(glfw3-external 
+		SOURCE_DIR ${GLFW3_SOURCE_DIR}
+		EXCLUDE_FROM_ALL
+		CMAKE_ARGS
+			-DGLFW_BUILD_DOCS=OFF
+			-DGLFW_BUILD_EXAMPLES=OFF
+			-DGLFW_BUILD_TESTS=OFF
+			-DGLFW_INSTALL=ON
+			-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install
+			-DBUILD_SHARED_LIBS=OFF
+	)
+	add_library(glfw3 INTERFACE)
+	add_library(glfw3-ex UNKNOWN IMPORTED GLOBAL)
+	set_target_properties(glfw3-ex PROPERTIES
+		IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install/lib/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+	#	IMPORTED_LOCATION_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/src/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+	#	IMPORTED_LOCATION_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/src/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+	#	IMPORTED_LOCATION_MINSIZEREL "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/src/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+	#	IMPORTED_LOCATION_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/src/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+	)
+	add_dependencies(glfw3-ex glfw3-external)
+	target_include_directories(glfw3 INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install/include")
+	target_link_libraries(glfw3 INTERFACE glfw3-ex)
+	
+endif()
 endif()
 
 
