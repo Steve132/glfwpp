@@ -10,7 +10,6 @@ else()
 set(GLFW3_FOUND False)
 endif()
 
-
 if(NOT GLFW3_FOUND)
 	find_package(GLFW3 QUIET)
 	if(GLFW3_FOUND)
@@ -38,13 +37,13 @@ if(NOT GLFW3_FOUND)
 	
 if((NOT EXISTS ${GLFW3_SOURCE_DIR}) AND GLFW3_TRY_FETCH)
 	include(FetchContent)
-	set(GLFW3_ZIP_URL "https://github.com/glfw/glfw/releases/download/${GLFW3_FETCH_VERSION}/glfw-${GLFW3_FETCH_VERSION}.zip")
+	set(GLFW3_ARCHIVE_URL "https://github.com/glfw/glfw/releases/download/${GLFW3_FETCH_VERSION}/glfw-${GLFW3_FETCH_VERSION}.zip")
 	FetchContent_Declare(glfw3 
-				URL ${GLFW3_ZIP_URL}
+				URL ${GLFW3_ARCHIVE_URL}
 				)
 	FetchContent_GetProperties(glfw3)
 	if(NOT glfw3_POPULATED)
-	  message(STATUS "Downloading ${GLFW3_ZIP_URL}")
+	  message(STATUS "Downloading ${GLFW3_ARCHIVE_URL}")
 		FetchContent_Populate(glfw3)
 		if(glfw3_POPULATED)
 			set(GLFW3_SOURCE_DIR ${glfw3_SOURCE_DIR})
