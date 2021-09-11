@@ -40,7 +40,7 @@ public:
 	Window(int width,int height,const Hints& hints=Hints(),const std::string& title=std::string(),const Monitor& fullscreen_mon=Monitor::None(),const Window* share=nullptr);
 	//TODO: Vulkan with VkInstance
 	
-	GLFWindow* pointer() { return ptr->get(); }
+	GLFWwindow* pointer() { return ptr.get(); }
 
 	void ShouldClose(bool doclose) {
 		glfwSetWindowShouldClose(ptr.get(),doclose ? GLFW_TRUE : GLFW_FALSE);
