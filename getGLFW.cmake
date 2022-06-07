@@ -14,7 +14,7 @@ else()
 set(GLFW3_FOUND False)
 endif()
 
-if(NOT GLFW3_FOUND)
+if((NOT GLFW3_FOUND) AND FALSE)
 	find_package(GLFW3 QUIET PATHS ${_GLFW_EXTRA_SEARCH_PATH})
 	if(GLFW3_FOUND)
 		add_library(glfw3 ALIAS GLFW3::GLFW3)
