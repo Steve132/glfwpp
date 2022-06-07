@@ -4,6 +4,10 @@ set(GLFW3_SOURCE_DIR "" CACHE PATH "The location of the source code distro for G
 set(GLFW3_INCLUDE_DIR ""  CACHE PATH "The location of glfw.h")
 set(GLFW3_LIBRARIES ""  CACHE FILEPATH "The location of glfw.lib")
 
+set(_GLFW_EXTRA_SEARCH_PATH "")
+
+macro(_RUN_GLFW_SEARCH)
+
 if(TARGET glfw3)
 set(GLFW3_FOUND True)
 else()
@@ -11,15 +15,16 @@ set(GLFW3_FOUND False)
 endif()
 
 if(NOT GLFW3_FOUND)
-	find_package(GLFW3 QUIET)
+	find_package(GLFW3 QUIET PATHS ${_GLFW_EXTRA_SEARCH_PATH})
 	if(GLFW3_FOUND)
 		add_library(glfw3 ALIAS GLFW3::GLFW3)
 	endif()
 endif()
 
 if(NOT GLFW3_FOUND)
-	find_package(glfw3 QUIET)
+	find_package(glfw3 QUIET PATHS ${_GLFW_EXTRA_SEARCH_PATH})
 	if(glfw3_FOUND)
+		set_target_properties(glfw PROPERTIES IMPORTED_GLOBAL TRUE)
 		add_library(glfw3 ALIAS glfw)
 		set(GLFW3_FOUND True)
 	endif()
@@ -32,6 +37,9 @@ if((NOT GLFW3_FOUND) AND (EXISTS ${GLFW3_INCLUDE_DIR}) AND (EXISTS ${GLFW3_LIBRA
 	set(GLFW3_FOUND True)
 endif()
 
+endmacro()
+
+_RUN_GLFW_SEARCH()
 
 if(NOT GLFW3_FOUND)
 	
@@ -50,6 +58,7 @@ if((NOT EXISTS ${GLFW3_SOURCE_DIR}) AND GLFW3_TRY_FETCH)
 		endif()
 	endif()
 endif()
+
 if(EXISTS ${GLFW3_SOURCE_DIR})
 	include(ExternalProject)
 	
@@ -70,19 +79,8 @@ if(EXISTS ${GLFW3_SOURCE_DIR})
 			-DCMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
 			-DCMAKE_POLICY_DEFAULT_CMP0091=NEW
 	)
-	add_library(glfw3 INTERFACE)
-	add_library(glfw3-ex UNKNOWN IMPORTED GLOBAL)
-	set_target_properties(glfw3-ex PROPERTIES
-		IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install/lib/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	#	IMPORTED_LOCATION_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/src/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	#	IMPORTED_LOCATION_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/src/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	#	IMPORTED_LOCATION_MINSIZEREL "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/src/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	#	IMPORTED_LOCATION_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/src/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
-	)
-	add_dependencies(glfw3-ex glfw3-external)
-	target_include_directories(glfw3 INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install/include")
-	target_link_libraries(glfw3 INTERFACE glfw3-ex)
-	
+set(_GLFW_EXTRA_SEARCH_PATH ${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install)
+_RUN_GLFW_SEARCH()
 endif()
 endif()
 
