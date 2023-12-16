@@ -78,9 +78,17 @@ if(EXISTS ${GLFW3_SOURCE_DIR})
 			-DUSE_MSVC_RUNTIME_LIBRARY_DLL=ON
 			-DCMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
 			-DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+   			-DCMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM}
+		STEP_TARGETS install
+		INSTALL_BYPRODUCTS ${GLFW_LIB}
+		
 	)
-set(_GLFW_EXTRA_SEARCH_PATH ${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install)
-_RUN_GLFW_SEARCH()
+	add_library(glfw3 UNKNOWN IMPORTED GLOBAL)
+	add_dependencies(glfw3 glfw3-external-install)
+	target_include_directories(glfw3 INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install/include")
+	set_property(TARGET glfw3 PROPERTY IMPORTED_LOCATION ${GLFW_LIB})
+	set(GLFW3_FOUND True)
+	
 endif()
 endif()
 
