@@ -65,6 +65,7 @@ if(EXISTS ${GLFW3_SOURCE_DIR})
 	#-DUSE_MSVC_RUNTIME_LIBRARY_DLL=ON #this is broken.  It actually disables the patch and enables the default. it looks like it's copied from bullet.
 	# CMAKE_MSVC_RUNTIME_LIBARY=${CMAKE_MSVC_RUNTIME_LIBRARY} #pass through the default
 	#-DCMAKE_POLICY_DEFAULT_CMP<NNNN>=<OLD|NEW> set the policy to read the variable.
+	set(GLFW_LIB ${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install/lib/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX})
 	ExternalProject_Add(glfw3-external 
 		SOURCE_DIR ${GLFW3_SOURCE_DIR}
 		EXCLUDE_FROM_ALL
