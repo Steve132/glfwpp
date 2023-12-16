@@ -81,12 +81,12 @@ if(EXISTS ${GLFW3_SOURCE_DIR})
 			-DCMAKE_POLICY_DEFAULT_CMP0091=NEW
    			-DCMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM}
 		STEP_TARGETS install
-		INSTALL_BYPRODUCTS ${GLFW_LIB}
+		INSTALL_BYPRODUCTS ${GLFW_LIB} 
 		
 	)
 	add_library(glfw3 UNKNOWN IMPORTED GLOBAL)
 	add_dependencies(glfw3 glfw3-external-install)
-	target_include_directories(glfw3 INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/glfw3-external-prefix/install/include")
+	target_include_directories(glfw3 INTERFACE "${GLFW3_SOURCE_DIR}/include")
 	set_property(TARGET glfw3 PROPERTY IMPORTED_LOCATION ${GLFW_LIB})
 	set(GLFW3_FOUND True)
 	
